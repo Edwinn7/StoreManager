@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Registrar Pedido</title>
+    <script>
+        function calcularGananciaYTotal() {
+            const precioCompra = parseFloat(document.getElementById('precio_compra').value) || 0;
+            const precioVenta = parseFloat(document.getElementById('precio_venta').value) || 0;
+            const cantidad = parseInt(document.getElementById('cantidad').value) || 0;
+            // Calcula la ganancia y el total
+            const ganancia = (precioVenta - precioCompra) * cantidad;
+            const total = precioVenta * cantidad;
+            // Actualiza los valores en los campos correspondientes
+            document.getElementById('ganancia').value = ganancia.toFixed(2);
+            document.getElementById('total').value = total.toFixed(2);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="content">
+        <div class="container">
+            <div class="row align-items-stretch justify-content-center no-gutters">
+                <div class="col-md-10">
+                    <div class="form h-100 contact-wrap p-5">
+                        <h3 class="text-center">Registrar Pedido</h3>
+                        <form class="mb-5" method="post" id="contactForm" name="contactForm">
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="tipo_cliente" class="col-form-label">Tipo de Cliente *</label>
+                                    <select class="form-control" name="tipo_cliente" id="tipo_cliente" required>
+                                        <option value="Grupo">Grupo</option>
+                                        <option value="Instagram">Instagram</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="canal_compra" class="col-form-label">Canal de Compra *</label>
+                                    <select class="form-control" name="canal_compra" id="canal_compra" required>
+                                        <option value="WhatsApp">WhatsApp</option>
+                                        <option value="Instagram">Instagram</option>
+                                        <option value="PAM">PAM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="medio_pago" class="col-form-label">Medio de Pago *</label>
+                                    <select class="form-control" name="medio_pago" id="medio_pago" required>
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="Bancolombia">Bancolombia</option>
+                                        <option value="Daviplata">Daviplata</option>
+                                        <option value="Nequi">Nequi</option>
+                                        <option value="CTE">CTE</option>
+                                        <option value="Cash">Cash</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="nombre" class="col-form-label">Nombre *</label>
+                                    <input type="text" class="form-control" name="nombre" id="nombre" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="producto" class="col-form-label">Producto *</label>
+                                    <input type="text" class="form-control" name="producto" id="producto" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="precio_compra" class="col-form-label">Precio de Compra *</label>
+                                    <input type="number" step="0.01" class="form-control" name="precio_compra"
+                                        id="precio_compra" oninput="calcularGananciaYTotal()" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="precio_venta" class="col-form-label">Precio de Venta *</label>
+                                    <input type="number" step="0.01" class="form-control" name="precio_venta"
+                                        id="precio_venta" oninput="calcularGananciaYTotal()" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="costo_envio" class="col-form-label">Costo de Envío *</label>
+                                    <input type="number" step="0.01" class="form-control" name="costo_envio"
+                                        id="costo_envio" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="tipo_compra" class="col-form-label">Tipo de Compra *</label>
+                                    <select class="form-control" name="tipo_compra" id="tipo_compra" required>
+                                        <option value="Recompra">Recompra</option>
+                                        <option value="Compra">Compra</option>
+                                        <option value="Cambio">Cambio</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="cantidad" class="col-form-label">Cantidad *</label>
+                                    <input type="number" class="form-control" name="cantidad" id="cantidad"
+                                        oninput="calcularGananciaYTotal()" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="total" class="col-form-label">Total *</label>
+                                    <input type="number" step="0.01" class="form-control" name="total" id="total"
+                                        readonly required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="ganancia" class="col-form-label">Ganancia *</label>
+                                    <input type="number" step="0.01" class="form-control" name="ganancia" id="ganancia"
+                                        readonly required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="pago_en_caja" class="col-form-label">Pago en Caja *</label>
+                                    <select class="form-control" name="pago_en_caja" id="pago_en_caja" required>
+                                        <option value="Pagado">Pagado</option>
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="Abono">Abono</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <h4>Información de Envío</h4>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="cedula" class="col-form-label">Cédula *</label>
+                                    <input type="text" class="form-control" name="cedula" id="cedula" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="celular" class="col-form-label">Celular *</label>
+                                    <input type="text" class="form-control" name="celular" id="celular" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="email" class="col-form-label">Correo Electrónico *</label>
+                                    <input type="email" class="form-control" name="email" id="email" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="ciudad" class="col-form-label">Ciudad *</label>
+                                    <input type="text" class="form-control" name="ciudad" id="ciudad" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="direccion" class="col-form-label">Dirección *</label>
+                                    <input type="text" class="form-control" name="direccion" id="direccion" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="instagram" class="col-form-label">Instagram *</label>
+                                    <input type="text" class="form-control" name="instagram" id="instagram" required>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-md-5 form-group text-center">
+                                    <input type="submit" value="Registrar Pedido"
+                                        class="btn btn-block btn-primary rounded-0 py-2 px-4">
+                                    <span class="submitting"></span>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div id="form-message-warning mt-4"></div>
+                        <div id="form-message-success">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

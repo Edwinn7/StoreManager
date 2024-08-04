@@ -1,0 +1,26 @@
+<!-- templates/nuevo_cliente.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nuevo Cliente</title>
+</head>
+<body>
+    <h1>Agregar Nuevo Cliente</h1>
+    <form action="{{ url_for('nuevo_cliente') }}" method="post">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="direccion" name="direccion"><br><br>
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono"><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+        <input type="submit" value="Agregar Cliente">
+    </form>
+    <br>
+    <a href="{{ url_for('listar_clientes') }}">Volver a la lista de clientes</a>
+</body>
+</html>

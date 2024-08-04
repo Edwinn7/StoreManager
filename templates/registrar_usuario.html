@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Registrar Usuario</title>
+</head>
+
+<body>
+    <div class="content">
+        <div class="container">
+            <div class="row align-items-stretch justify-content-center no-gutters">
+                <div class="col-md-10">
+                    <div class="form h-100 contact-wrap p-5">
+                        <h3 class="text-center">Registrar Usuario</h3>
+                        <form class="mb-5" method="post" id="contactForm" name="contactForm">
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="nombre" class="col-form-label">Nombre *</label>
+                                    <input type="text" class="form-control" name="nombre" id="nombre" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="cedula" class="col-form-label">Cédula *</label>
+                                    <input type="text" class="form-control" name="cedula" id="cedula" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="celular" class="col-form-label">Celular *</label>
+                                    <input type="text" class="form-control" name="celular" id="celular" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="email" class="col-form-label">Correo Electrónico *</label>
+                                    <input type="email" class="form-control" name="email" id="email" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="ciudad" class="col-form-label">Ciudad *</label>
+                                    <input type="text" class="form-control" name="ciudad" id="ciudad" required>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="direccion" class="col-form-label">Dirección *</label>
+                                    <input type="text" class="form-control" name="direccion" id="direccion" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="instagram" class="col-form-label">Instagram *</label>
+                                    <input type="text" class="form-control" name="instagram" id="instagram" required>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-md-5 form-group text-center">
+                                    <input type="submit" value="Registrar Usuario"
+                                        class="btn btn-block btn-primary rounded-0 py-2 px-4">
+                                    <span class="submitting"></span>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div id="form-message-warning mt-4"></div>
+                        <div id="form-message-success">
+                            ¡El usuario ha sido registrado!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
