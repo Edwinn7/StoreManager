@@ -12,7 +12,7 @@
 <body>
     <section id="sidebar">
         <a href="#" class="brand">
-            <i class='bx bxs-smile'></i>
+            <i class='bx bxs'></i>
             <span class="text">RomaStore</span>
         </a>
         <ul class="side-menu top">
@@ -24,20 +24,20 @@
             </li>
             <li>
                 <a href="{{ url_for('registrar_pedido') }}">
-                    <i class='bx bxs-dashboard'></i>
+                    <i class='bx bxs-shopping-bag-alt'></i>
                     <span class="text">Registrar Pedido</span>
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('clientes') }}">
-                    <i class='bx bxs-dashboard'></i>
+                    <i class='bx bxs-group'></i>
                     <span class="text">Clientes</span>
                 </a>
             </li>
             <li>
-                <a href="#">
-                    <i class='bx bxs-dashboard'></i>
-                    <span class="text">Ventas</span>
+                <a href="{{ url_for('registrar_abono') }}">
+                    <i class='bx bxs-dollar-circle'></i>
+                    <span class="text">Registrar Abono</span>
                 </a>
             </li>
             <li>
@@ -50,18 +50,6 @@
                 <a href="#">
                     <i class='bx bxs-doughnut-chart'></i>
                     <span class="text">Analytics</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class='bx bxs-message-dots'></i>
-                    <span class="text">Message</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class='bx bxs-group'></i>
-                    <span class="text">Team</span>
                 </a>
             </li>
         </ul>
@@ -86,10 +74,11 @@
             <i class='bx bx-menu'></i>
             <a href="#" class="nav-link">Categorias</a>
             <form action="#">
-                <div class="form-input">
+                <!-- Barra de busqueda -->
+                <!-- <div class="form-input">
                     <input type="search" placeholder="Buscar">
                     <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
-                </div>
+                </div> -->
             </form>
             <input type="checkbox" id="switch-mode" hidden>
             <label for="switch-mode" class="switch-mode"></label>
@@ -116,32 +105,40 @@
                         </li>
                     </ul>
                 </div>
-                <a href="#" class="btn-download">
+                <!-- <a href="#" class="btn-download">
                     <i class='bx bxs-cloud-download'></i>
                     <span class="text">Download PDF</span>
-                </a>
+                </a> -->
             </div>
 
             <ul class="box-info">
                 <li>
-                    <i class='bx bxs-calendar-check'></i>
-                    <span class="text">
-                        <h3>{{ num_orders_today }}</h3>
-                        <p>New Order</p>
-                    </span>
+                    <form action="{{ url_for('registrar_pedido') }}" method="get" style="display: inline;">
+                        <button type="submit"
+                            style="background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
+                            <i class='bx bxs-calendar-check' style="font-size: 24px;"></i>
+                            <span class="text" style="margin-left: 10px;">
+                                <h3>{{ num_orders_today }}</h3>
+                                <p>Pedidos</p>
+                            </span>
+                        </button>
+                    </form>
                 </li>
-                <li>
-                    <i class='bx bxs-group'></i>
-                    <span class="text">
-                        <h3>2834</h3>
-                        <p>Visitors</p>
-                    </span>
+                <li class="list-item">
+                    <a href="{{ url_for('clientes') }}" class="btn btn-outline-success d-flex align-items-center p-3"
+                        role="button">
+                        <i class='bx bxs-group'></i>
+                        <span class="text ms-3">
+                            <h3>{{ num_clients }}</h3>
+                            <p>Clientes</p>
+                        </span>
+                    </a>
                 </li>
                 <li>
                     <i class='bx bxs-dollar-circle'></i>
                     <span class="text">
                         <h3>$2543</h3>
-                        <p>Total Sales</p>
+                        <p>Total Ventas</p>
                     </span>
                 </li>
             </ul>

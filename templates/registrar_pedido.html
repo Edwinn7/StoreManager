@@ -13,10 +13,8 @@
             const precioCompra = parseFloat(document.getElementById('precio_compra').value) || 0;
             const precioVenta = parseFloat(document.getElementById('precio_venta').value) || 0;
             const cantidad = parseInt(document.getElementById('cantidad').value) || 0;
-            // Calcula la ganancia y el total
             const ganancia = (precioVenta - precioCompra) * cantidad;
             const total = precioVenta * cantidad;
-            // Actualiza los valores en los campos correspondientes
             document.getElementById('ganancia').value = ganancia.toFixed(2);
             document.getElementById('total').value = total.toFixed(2);
         }

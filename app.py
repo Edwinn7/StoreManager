@@ -53,7 +53,7 @@ def registrar_pedido():
         tipo_compra = request.form['tipo_compra']
         cantidad = int(request.form['cantidad'])
         total = precio_venta * cantidad
-        ganancia = precio_venta - precio_compra
+        ganancia = (precio_venta - precio_compra) * cantidad  # Ajuste en el cálculo de ganancia
         pago_en_caja = request.form['pago_en_caja']
         cedula = request.form['cedula']
         celular = request.form['celular']
@@ -66,7 +66,7 @@ def registrar_pedido():
         cursor.execute("""
             INSERT INTO orders (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, user, producto, date_order)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-        """, (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, nombre,producto))
+        """, (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, nombre, producto))
         db.commit()
         cursor.close()
         return redirect(url_for('dashboard'))
@@ -80,7 +80,6 @@ def registrar_abono():
         return redirect(url_for('login'))
     
     if request.method == 'POST':
-        order_id = request.form['order_id']
         fecha = request.form['fecha']
         valor = request.form['valor']
         cuenta = request.form['cuenta']
@@ -90,9 +89,9 @@ def registrar_abono():
         
         cursor = db.cursor()
         cursor.execute("""
-            INSERT INTO abonos (order_id, fecha, valor, cuenta, nombre, medio_pago, confirmacion)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (order_id, fecha, valor, cuenta, nombre, medio_pago, confirmacion))
+            INSERT INTO abonos (fecha, valor, cuenta, nombre, medio_pago, confirmacion)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (fecha, valor, cuenta, nombre, medio_pago, confirmacion))
         
         db.commit()
         cursor.close()
@@ -131,10 +130,17 @@ def registrar_usuario():
 def dashboard():
     if 'logged_in' in session:
         cursor = db.cursor(dictionary=True)
+        # Obtener la cantidad de pedidos del día
+        cursor.execute("SELECT COUNT(*) AS num_orders_today FROM orders WHERE DATE(date_order) = CURDATE()")
+        num_orders_today = cursor.fetchone()['num_orders_today']        
+        # Obtener la cantidad total de clientes
+        cursor.execute("SELECT COUNT(*) AS num_clients FROM clientes")
+        num_clients = cursor.fetchone()['num_clients']
+        # Obtener todos los pedidos (si es necesario para otras partes del dashboard)
         cursor.execute("SELECT * FROM orders")
         orders = cursor.fetchall()
         cursor.close()
-        return render_template('dashboard.html', orders=orders)
+        return render_template('dashboard.html', num_orders_today=num_orders_today, num_clients=num_clients, orders=orders)
     else:
         return redirect(url_for('login'))
     
@@ -143,23 +149,27 @@ def dashboard():
 def clientes():
     if 'logged_in' in session:
         if request.method == 'POST':
+            cedula = request.form['cedula']
             nombre = request.form['nombre']
+            ciudad = request.form['ciudad']
             direccion = request.form['direccion']
-            telefono = request.form['telefono']
+            celular = request.form['celular']
             email = request.form['email']
+            instagram = request.form['instagram']
             cursor = db.cursor()
-            cursor.execute("INSERT INTO clientes (nombre, direccion, telefono, email) VALUES (%s, %s, %s, %s)", (nombre, direccion, telefono, email))
+            cursor.execute("INSERT INTO clientes (cedula, nombre, ciudad, direccion, celular, email, instagram) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                           (cedula, nombre, ciudad, direccion, celular, email, instagram))
             db.commit()
             cursor.close()
             return redirect(url_for('clientes'))
         else:
-            cursor = db.cursor()
+            cursor = db.cursor(dictionary=True)
             cursor.execute("SELECT * FROM clientes")
             clientes = cursor.fetchall()
             cursor.close()
             return render_template('clientes.html', clientes=clientes)
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('login'))    
     
 @app.route('/cliente/<int:cliente_id>')
 def detalle_cliente(cliente_id):
