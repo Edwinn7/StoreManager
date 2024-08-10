@@ -4,7 +4,7 @@ import mysql.connector
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# CORREGIR FORMULARIO Y RUTA PARA REGISTRO DE PEDIDOS
+# HACER QUE SE MUEVAN LOS SALDOS DE CLIENTE (HISTORIAL CLIENTE)
 
 # Configuracion de la conexion a la base de datos
 db = mysql.connector.connect(
@@ -53,7 +53,7 @@ def registrar_pedido():
         tipo_compra = request.form['tipo_compra']
         cantidad = int(request.form['cantidad'])
         total = precio_venta * cantidad
-        ganancia = (precio_venta - precio_compra) * cantidad  # Ajuste en el cálculo de ganancia
+        ganancia = (precio_venta - precio_compra) * cantidad
         pago_en_caja = request.form['pago_en_caja']
         cedula = request.form['cedula']
         celular = request.form['celular']
@@ -63,12 +63,43 @@ def registrar_pedido():
         instagram = request.form['instagram']
 
         cursor = db.cursor()
-        cursor.execute("""
-            INSERT INTO orders (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, user, producto, date_order)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-        """, (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, nombre, producto))
-        db.commit()
-        cursor.close()
+        try:
+            # Insertar el pedido
+            cursor.execute("""
+                INSERT INTO orders (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, user, producto, date_order)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+            """, (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, nombre, producto))
+            order_id = cursor.lastrowid
+
+            # Verificar que el cliente exista, buscando por cédula o celular
+            if cedula:
+                cursor.execute("SELECT id, nombre FROM clientes WHERE cedula = %s", (cedula,))
+            elif celular:
+                cursor.execute("SELECT id, nombre FROM clientes WHERE celular = %s", (celular,))
+            else:
+                return "Cédula o celular requerido", 400
+
+            result = cursor.fetchone()
+            if result is None:
+                # Si el cliente no existe, manejar el error
+                return "Cliente no encontrado", 404
+
+            cliente_id = result[0]  # Acceder por índice entero
+            cliente_nombre = result[1]  # Acceder al nombre del cliente
+
+            # Insertar en historial_clientes
+            cursor.execute("""
+                INSERT INTO historial_clientes (cliente_id, cliente_nombre, fecha, producto, cantidad, venta, compra, ganancia, pago_en_caja, estado_envio, comentarios, total)
+                VALUES (%s, %s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (cliente_id, cliente_nombre, producto, cantidad, precio_venta, precio_compra, ganancia, pago_en_caja, 'Pendiente', 'N/A', total))
+            
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            return str(e), 500
+        finally:
+            cursor.close()
+
         return redirect(url_for('dashboard'))
 
     return render_template('registrar_pedido.html')
@@ -239,6 +270,44 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
+@app.route('/historial_cliente', methods=['GET'])
+def historial_cliente():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    
+    search_query = request.args.get('search_query', '').strip()
+    
+    if not search_query:
+        return render_template('historial_cliente.html', historial=[], total_deuda=0, saldo_a_favor=0, suma_total=0, cliente_nombre='')
+
+    cursor = db.cursor(dictionary=True)
+    try:
+        # Buscar el cliente por nombre, cédula o celular
+        cursor.execute("""
+            SELECT id, nombre FROM clientes WHERE nombre LIKE %s OR cedula LIKE %s OR celular LIKE %s
+        """, ('%' + search_query + '%', '%' + search_query + '%', '%' + search_query + '%'))
+        cliente = cursor.fetchone()
+        if not cliente:
+            return render_template('historial_cliente.html', historial=[], total_deuda=0, saldo_a_favor=0, suma_total=0, cliente_nombre='')
+
+        cliente_id = cliente['id']
+        cliente_nombre = cliente['nombre']
+
+        # Obtener el historial del cliente
+        cursor.execute("""
+            SELECT * FROM historial_clientes WHERE cliente_id = %s
+        """, (cliente_id,))
+        historial = cursor.fetchall()
+
+        # Calcular total deuda, saldo a favor y suma total
+        total_deuda = sum(entry['total'] for entry in historial if entry['total'] > 0) or 0
+        saldo_a_favor = sum(entry['total'] for entry in historial if entry['total'] < 0) or 0
+        suma_total = total_deuda + saldo_a_favor
+
+    finally:
+        cursor.close()
+
+    return render_template('historial_cliente.html', historial=historial, total_deuda=total_deuda, saldo_a_favor=saldo_a_favor, suma_total=suma_total, cliente_nombre=cliente_nombre)
 
 
 

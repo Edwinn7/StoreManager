@@ -7,13 +7,14 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <title>Registrar Abono</title>
 </head>
 
 <body>
     <section id="sidebar">
-        <a href="#" class="brand">
-            <i class='bx bxs-smile'></i>
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <i class='bx bxs'></i>
             <span class="text">RomaStore</span>
         </a>
         <ul class="side-menu top">
@@ -41,7 +42,18 @@
                     <span class="text">Registrar Abono</span>
                 </a>
             </li>
-            <!-- Otros elementos del menú -->
+            <li>
+                <a href="#">
+                    <i class='bx bxs-shopping-bag-alt'></i>
+                    <span class="text">Saldos??</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('historial_cliente') }}">
+                    <i class='bx bxs-doughnut-chart'></i>
+                    <span class="text">Historial</span>
+                </a>
+            </li>
         </ul>
         <ul class="side-menu">
             <li>
@@ -53,7 +65,7 @@
             <li>
                 <a href="{{ url_for('logout') }}" class="logout">
                     <i class='bx bxs-log-out-circle'></i>
-                    <span class="text">Cerrar sesión</span>
+                    <span class="text">Cerrar sesion</span>
                 </a>
             </li>
         </ul>

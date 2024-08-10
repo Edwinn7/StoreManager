@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <title>Historial de Cliente</title>
+</head>
+
+<body>
+    <section id="sidebar">
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <i class='bx bxs'></i>
+            <span class="text">RomaStore</span>
+        </a>
+        <ul class="side-menu top">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class='bx bxs-dashboard'></i>
+                    <span class="text">Panel principal</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('registrar_pedido') }}">
+                    <i class='bx bxs-shopping-bag-alt'></i>
+                    <span class="text">Registrar Pedido</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('clientes') }}">
+                    <i class='bx bxs-group'></i>
+                    <span class="text">Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('registrar_abono') }}">
+                    <i class='bx bxs-dollar-circle'></i>
+                    <span class="text">Registrar Abono</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bxs-shopping-bag-alt'></i>
+                    <span class="text">Saldos??</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="{{ url_for('historial_cliente') }}">
+                    <i class='bx bxs-doughnut-chart'></i>
+                    <span class="text">Historial</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="#">
+                    <i class='bx bxs-cog'></i>
+                    <span class="text">Ajustes</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}" class="logout">
+                    <i class='bx bxs-log-out-circle'></i>
+                    <span class="text">Cerrar sesion</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section id="content">
+        <nav>
+            <i class='bx bx-menu'></i>
+            <a href="#" class="nav-link">Categorías</a>
+            <!-- Otros elementos del nav -->
+        </nav>
+
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Historial de Cliente</h1>
+                    <ul class="breadcrumb">
+                        <li><a href="{{ url_for('dashboard') }}">Panel principal</a></li>
+                        <li><i class='bx bx-chevron-right'></i></li>
+                        <li><a class="active" href="">Historial de Cliente</a></li>
+                    </ul>
+                </div>
+                <form action="{{ url_for('historial_cliente') }}" method="get" class="search-form">
+                    <input type="text" name="search_query" placeholder="Buscar cliente" required>
+                    <button type="submit">
+                        <i class='bx bx-search'></i>
+                    </button>
+                </form>
+            </div>
+
+            {% if historial %}
+                <div class="table-data">
+                    <div class="order">
+                        <div class="head">
+                            <h3>Historial de movimientos: {{ cliente_nombre }}</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>$ Venta</th>
+                                    <th>$ Compra</th>
+                                    <th>Ganancia</th>
+                                    <th>Pago en Caja</th>
+                                    <th>Estado Envío</th>
+                                    <th>Comentarios</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in historial %}
+                                <tr>
+                                    <td>{{ entry.fecha }}</td>
+                                    <td>{{ entry.producto }}</td>
+                                    <td>{{ entry.cantidad }}</td>
+                                    <td>${{ entry.venta }}</td>
+                                    <td>${{ entry.compra }}</td>
+                                    <td>${{ entry.ganancia }}</td>
+                                    <td>${{ entry.pago_en_caja }}</td>
+                                    <td>{{ entry.estado_envio }}</td>
+                                    <td>{{ entry.comentarios }}</td>
+                                    <td>${{ entry.total }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br>
+                <div class="sumary">
+                    <h3>Total deuda: ${{ total_deuda }}</h3>
+                    <h3>Saldo a favor: ${{ saldo_a_favor }}</h3>
+                    <h3>Suma total: ${{ suma_total }}</h3>
+                </div>
+            {% else %}
+                <p>No se encontraron registros para el cliente seleccionado.</p>
+            {% endif %}
+        </main>
+    </section>
+</body>
+
+</html>

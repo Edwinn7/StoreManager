@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <title>Administración</title>
 </head>
 
 <body>
     <section id="sidebar">
-        <a href="#" class="brand">
+        <a href="{{ url_for('dashboard') }}" class="brand">
             <i class='bx bxs'></i>
             <span class="text">RomaStore</span>
         </a>
@@ -43,13 +44,13 @@
             <li>
                 <a href="#">
                     <i class='bx bxs-shopping-bag-alt'></i>
-                    <span class="text">Saldos</span>
+                    <span class="text">Saldos??</span>
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="{{ url_for('historial_cliente') }}">
                     <i class='bx bxs-doughnut-chart'></i>
-                    <span class="text">Analytics</span>
+                    <span class="text">Historial</span>
                 </a>
             </li>
         </ul>
@@ -72,8 +73,8 @@
     <section id="content">
         <nav>
             <i class='bx bx-menu'></i>
-            <a href="#" class="nav-link">Categorias</a>
-            <form action="#">
+            <a href="" class="nav-link">Categorias</a>
+            <form action="">
                 <!-- Barra de busqueda -->
                 <!-- <div class="form-input">
                     <input type="search" placeholder="Buscar">
@@ -84,9 +85,9 @@
             <label for="switch-mode" class="switch-mode"></label>
             <a href="#" class="notification">
                 <i class='bx bxs-bell'></i>
-                <span class="num">8</span>
+                <!-- <span class="num"></span> -->
             </a>
-            <a href="#" class="profile">
+            <a href="" class="profile">
                 <img src="{{ url_for('static', filename='images/people.png') }}">
             </a>
         </nav>
@@ -97,11 +98,11 @@
                     <h1>Panel principal</h1>
                     <ul class="breadcrumb">
                         <li>
-                            <a href="#">Panel principal</a>
+                            <a href="">Panel principal</a>
                         </li>
                         <li><i class='bx bx-chevron-right'></i></li>
                         <li>
-                            <a class="active" href="#">Inicio</a>
+                            <a class="active" href="">Inicio</a>
                         </li>
                     </ul>
                 </div>
@@ -113,25 +114,24 @@
 
             <ul class="box-info">
                 <li>
+                    <i class='bx bxs-calendar-check' style="font-size: 24px;"></i>
                     <form action="{{ url_for('registrar_pedido') }}" method="get" style="display: inline;">
                         <button type="submit"
                             style="background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
-                            <i class='bx bxs-calendar-check' style="font-size: 24px;"></i>
-                            <span class="text" style="margin-left: 10px;">
+                            <span class="text">
                                 <h3>{{ num_orders_today }}</h3>
                                 <p>Pedidos</p>
                             </span>
                         </button>
                     </form>
                 </li>
-                <li class="list-item">
-                    <a href="{{ url_for('clientes') }}" class="btn btn-outline-success d-flex align-items-center p-3"
-                        role="button">
-                        <i class='bx bxs-group'></i>
-                        <span class="text ms-3">
-                            <h3>{{ num_clients }}</h3>
-                            <p>Clientes</p>
-                        </span>
+                <li>
+                    <i class='bx bxs-group'></i>
+                    <a href="{{ url_for('clientes') }}">
+                    <span class="text">
+                        <h3>{{ num_clients }}</h3>
+                        <p>Clientes</p>
+                    </span>
                     </a>
                 </li>
                 <li>
