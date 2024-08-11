@@ -11,18 +11,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <title>Registrar pedido</title>
-    <script>
-        function calcularGananciaYTotal() {
-            const precioCompra = parseFloat(document.getElementById('precio_compra').value) || 0;
-            const precioVenta = parseFloat(document.getElementById('precio_venta').value) || 0;
-            const cantidad = parseInt(document.getElementById('cantidad').value) || 0;
-            const ganancia = (precioVenta - precioCompra) * cantidad;
-            const total = precioVenta * cantidad;
-            document.getElementById('ganancia').value = ganancia.toFixed(2);
-            document.getElementById('total').value = total.toFixed(2);
-        }
-    </script>
-
 </head>
 
 <body>
@@ -266,7 +254,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>

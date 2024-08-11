@@ -101,14 +101,14 @@
                         <div class="head">
                             <h3>Historial de movimientos: {{ cliente_nombre }}</h3>
                         </div>
-                        <table>
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
-                                    <th>$ Venta</th>
-                                    <th>$ Compra</th>
+                                    <th>Venta</th>
+                                    <th>Compra</th>
                                     <th>Ganancia</th>
                                     <th>Pago en Caja</th>
                                     <th>Estado Envío</th>
@@ -122,13 +122,13 @@
                                     <td>{{ entry.fecha }}</td>
                                     <td>{{ entry.producto }}</td>
                                     <td>{{ entry.cantidad }}</td>
-                                    <td>${{ entry.venta }}</td>
-                                    <td>${{ entry.compra }}</td>
-                                    <td>${{ entry.ganancia }}</td>
-                                    <td>${{ entry.pago_en_caja }}</td>
+                                    <td class="format-number">{{ entry.venta }}</td>
+                                    <td class="format-number">{{ entry.compra }}</td>
+                                    <td class="format-number">{{ entry.ganancia }}</td>
+                                    <td>{{ entry.pago_en_caja }}</td>
                                     <td>{{ entry.estado_envio }}</td>
                                     <td>{{ entry.comentarios }}</td>
-                                    <td>${{ entry.total }}</td>
+                                    <td class="format-number">{{ entry.total }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -146,6 +146,7 @@
             {% endif %}
         </main>
     </section>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>

@@ -4,7 +4,7 @@ import mysql.connector
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# HACER QUE SE MUEVAN LOS SALDOS DE CLIENTE (HISTORIAL CLIENTE)
+# COMO SE GESTIONARA EL REGISTRO DE ABONOS EN EL ENDPOINT /registrar_abono
 
 # Configuracion de la conexion a la base de datos
 db = mysql.connector.connect(
@@ -14,7 +14,6 @@ db = mysql.connector.connect(
     database="storemanager"
 )
 
-# 04/08
 @app.route('/')
 def index():
     return redirect(url_for('login'))
@@ -52,7 +51,7 @@ def registrar_pedido():
         costo_envio = float(request.form['costo_envio'])
         tipo_compra = request.form['tipo_compra']
         cantidad = int(request.form['cantidad'])
-        total = precio_venta * cantidad
+        total = (precio_venta * cantidad) + costo_envio
         ganancia = (precio_venta - precio_compra) * cantidad
         pago_en_caja = request.form['pago_en_caja']
         cedula = request.form['cedula']
@@ -66,9 +65,9 @@ def registrar_pedido():
         try:
             # Insertar el pedido
             cursor.execute("""
-                INSERT INTO orders (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, user, producto, date_order)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-            """, (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, nombre, producto))
+                INSERT INTO orders (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, user, producto, cantidad, date_order)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+            """, (tipo_cliente, canal_compra, medio_pago, costo_envio, tipo_compra, total, ganancia, pago_en_caja, cedula, celular, email, ciudad, direccion, instagram, nombre, producto, cantidad))
             order_id = cursor.lastrowid
 
             # Verificar que el cliente exista, buscando por cédula o celular
@@ -99,9 +98,7 @@ def registrar_pedido():
             return str(e), 500
         finally:
             cursor.close()
-
-        return redirect(url_for('dashboard'))
-
+            return redirect(url_for('registrar_pedido'))
     return render_template('registrar_pedido.html')
 
 
@@ -110,25 +107,50 @@ def registrar_abono():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
     
+    cursor = db.cursor(dictionary=True)
+
     if request.method == 'POST':
         fecha = request.form['fecha']
-        valor = request.form['valor']
+        valor = float(request.form['valor'])  # Convertir el valor a float para facilitar cálculos
         cuenta = request.form['cuenta']
         nombre = request.form['nombre']
         medio_pago = request.form['medio_pago']
         confirmacion = request.form['confirmacion']
         
-        cursor = db.cursor()
+        # Buscar al cliente por nombre
+        cursor.execute("""
+            SELECT id FROM clientes WHERE nombre = %s
+        """, (nombre,))
+        cliente = cursor.fetchone()
+        
+        if not cliente:
+            # Si no se encuentra el cliente, manejar el error apropiadamente
+            cursor.close()
+            return "Cliente no encontrado", 404
+        
+        cliente_id = cliente['id']
+        
+        # Insertar el abono en la tabla de abonos
         cursor.execute("""
             INSERT INTO abonos (fecha, valor, cuenta, nombre, medio_pago, confirmacion)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (fecha, valor, cuenta, nombre, medio_pago, confirmacion))
         
+        # Insertar un registro en el historial del cliente para reflejar el abono
+        cursor.execute("""
+            INSERT INTO historial_clientes (cliente_id, fecha, producto, cantidad, venta, compra, ganancia, pago_en_caja, estado_envio, comentarios, total)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (cliente_id, fecha, 'Abono', 0, 0, 0, 0, valor, 'Abono Realizado', confirmacion, -valor))
+        
+        # Confirmar los cambios en la base de datos
         db.commit()
-        cursor.close()
-        return redirect(url_for('dashboard'))
+
+    # Consultar todos los abonos para mostrarlos en la tabla
+    cursor.execute("SELECT * FROM abonos")
+    abonos = cursor.fetchall()
+    cursor.close()
     
-    return render_template('registrar_abono.html')
+    return render_template('registrar_abono.html', abonos=abonos)
 
 @app.route('/registrar_usuario', methods=['GET', 'POST'])
 def registrar_usuario():
@@ -161,17 +183,36 @@ def registrar_usuario():
 def dashboard():
     if 'logged_in' in session:
         cursor = db.cursor(dictionary=True)
+        # Obtener la suma total de ventas del día
+        cursor.execute("""
+            SELECT SUM(total) AS total_sales_today
+            FROM orders
+            WHERE DATE(date_order) = CURDATE()
+        """)
+        total_sales_today = cursor.fetchone()['total_sales_today'] or 0
+        # Formatear el número con separador de miles
+        formatted_total_sales_today = "{:,.2f}".format(total_sales_today)
         # Obtener la cantidad de pedidos del día
         cursor.execute("SELECT COUNT(*) AS num_orders_today FROM orders WHERE DATE(date_order) = CURDATE()")
-        num_orders_today = cursor.fetchone()['num_orders_today']        
+        num_orders_today = cursor.fetchone()['num_orders_today']
+        
         # Obtener la cantidad total de clientes
         cursor.execute("SELECT COUNT(*) AS num_clients FROM clientes")
         num_clients = cursor.fetchone()['num_clients']
+        
         # Obtener todos los pedidos (si es necesario para otras partes del dashboard)
         cursor.execute("SELECT * FROM orders")
         orders = cursor.fetchall()
+        
         cursor.close()
-        return render_template('dashboard.html', num_orders_today=num_orders_today, num_clients=num_clients, orders=orders)
+        
+        return render_template(
+            'dashboard.html', 
+            total_sales_today=formatted_total_sales_today, 
+            num_orders_today=num_orders_today, 
+            num_clients=num_clients, 
+            orders=orders
+        )
     else:
         return redirect(url_for('login'))
     
@@ -304,10 +345,15 @@ def historial_cliente():
         saldo_a_favor = sum(entry['total'] for entry in historial if entry['total'] < 0) or 0
         suma_total = total_deuda + saldo_a_favor
 
+        # Formatear los números
+        total_deuda_formateado = "{:,.2f}".format(total_deuda).replace(",", "X").replace(".", ",").replace("X", ".")
+        saldo_a_favor_formateado = "{:,.2f}".format(saldo_a_favor).replace(",", "X").replace(".", ",").replace("X", ".")
+        suma_total_formateado = "{:,.2f}".format(suma_total).replace(",", "X").replace(".", ",").replace("X", ".")
+
     finally:
         cursor.close()
 
-    return render_template('historial_cliente.html', historial=historial, total_deuda=total_deuda, saldo_a_favor=saldo_a_favor, suma_total=suma_total, cliente_nombre=cliente_nombre)
+    return render_template('historial_cliente.html', historial=historial, total_deuda=total_deuda_formateado, saldo_a_favor=saldo_a_favor_formateado, suma_total=suma_total_formateado, cliente_nombre=cliente_nombre)
 
 
 

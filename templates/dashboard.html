@@ -128,16 +128,16 @@
                 <li>
                     <i class='bx bxs-group'></i>
                     <a href="{{ url_for('clientes') }}">
-                    <span class="text">
-                        <h3>{{ num_clients }}</h3>
-                        <p>Clientes</p>
-                    </span>
+                        <span class="text">
+                            <h3>{{ num_clients }}</h3>
+                            <p>Clientes</p>
+                        </span>
                     </a>
                 </li>
                 <li>
                     <i class='bx bxs-dollar-circle'></i>
                     <span class="text">
-                        <h3>$2543</h3>
+                        <h3>${{ total_sales_today}}</h3>
                         <p>Total Ventas</p>
                     </span>
                 </li>
@@ -153,23 +153,27 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Cliente</th>
                                 <th>Fecha de pedido</th>
+                                <th>Cliente</th>
                                 <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Costo envio</th>
                                 <th>Total</th>
-                                <th>Estado</th>
+                                <th>Pago en caja</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for order in orders %}
                             <tr>
                                 <td>
-                                    <p>{{ order.user }}</p>
+                                    <p>{{ order.date_order }}</p>
                                 </td>
-                                <td>{{ order.date_order }}</td>
+                                <td>{{ order.user }}</td>
                                 <td>{{ order.producto }}</td>
-                                <td>{{ order.total }}</td>
-                                <td><span class="status {{ order.status }}">{{ order.status.capitalize() }}</span></td>
+                                <td>{{ order.cantidad }}</td>
+                                <td class="format-number">{{ order.costo_envio }}</td>
+                                <td class="format-number">{{ order.total }}</td>
+                                <td>{{ order.pago_en_caja }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
