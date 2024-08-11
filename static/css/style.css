@@ -591,4 +591,57 @@ body {
 	}
 }
 
+/* Ocultar la barra de búsqueda inicialmente */
+.search-container {
+    position: relative;
+    display: inline-block;
+}
 
+.search-input {
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease, opacity 0.3s ease;
+    position: absolute;
+    right: 30px;
+    top: 0;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.search-container {
+    position: relative;
+}
+
+/* Mostrar la barra de búsqueda cuando el contenedor tiene la clase 'active' */
+.search-container.active .search-input {
+    width: 200px;
+    opacity: 1;
+}
+
+
+/* búsqueda cliente */
+
+#autocomplete-results {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 100%;
+    z-index: 1000;
+    display: none; /* Inicialmente oculto */
+}
+
+#autocomplete-results.show {
+    display: block; /* Mostrar solo cuando hay resultados */
+}
+
+#autocomplete-results li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+#autocomplete-results li:hover {
+    background-color: #f0f0f0;
+}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, request
+from flask import Flask, render_template, request, redirect, url_for, session, request, jsonify
 import mysql.connector
 
 app = Flask(__name__)
@@ -101,7 +101,6 @@ def registrar_pedido():
             return redirect(url_for('registrar_pedido'))
     return render_template('registrar_pedido.html')
 
-
 @app.route('/registrar_abono', methods=['GET', 'POST'])
 def registrar_abono():
     if 'logged_in' not in session:
@@ -144,7 +143,6 @@ def registrar_abono():
         
         # Confirmar los cambios en la base de datos
         db.commit()
-
     # Consultar todos los abonos para mostrarlos en la tabla
     cursor.execute("SELECT * FROM abonos")
     abonos = cursor.fetchall()
@@ -192,6 +190,17 @@ def dashboard():
         total_sales_today = cursor.fetchone()['total_sales_today'] or 0
         # Formatear el número con separador de miles
         formatted_total_sales_today = "{:,.2f}".format(total_sales_today)
+
+        #Ganancias
+        cursor.execute("""
+            SELECT SUM(ganancia) AS total_profit_today
+            FROM orders
+            WHERE DATE(date_order) = CURDATE()
+        """)
+        total_profit_today = cursor.fetchone()['total_profit_today'] or 0
+        # Formatear el número con separador de miles
+        formatted_total_profit_today = "{:,.2f}".format(total_profit_today)
+
         # Obtener la cantidad de pedidos del día
         cursor.execute("SELECT COUNT(*) AS num_orders_today FROM orders WHERE DATE(date_order) = CURDATE()")
         num_orders_today = cursor.fetchone()['num_orders_today']
@@ -211,7 +220,8 @@ def dashboard():
             total_sales_today=formatted_total_sales_today, 
             num_orders_today=num_orders_today, 
             num_clients=num_clients, 
-            orders=orders
+            orders=orders,
+            total_profit_today=formatted_total_profit_today
         )
     else:
         return redirect(url_for('login'))
@@ -355,7 +365,19 @@ def historial_cliente():
 
     return render_template('historial_cliente.html', historial=historial, total_deuda=total_deuda_formateado, saldo_a_favor=saldo_a_favor_formateado, suma_total=suma_total_formateado, cliente_nombre=cliente_nombre)
 
-
+# busqueda y autocompletado nombre
+@app.route('/buscar_clientes')
+def buscar_clientes():
+    query = request.args.get('query', '')
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT id, nombre, cedula, celular, email, ciudad, direccion, instagram 
+        FROM clientes 
+        WHERE nombre LIKE %s
+    """, (f'%{query}%',))
+    clientes = cursor.fetchall()
+    cursor.close()
+    return jsonify(clientes)
 
 
 

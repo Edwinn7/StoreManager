@@ -114,23 +114,20 @@
 
             <ul class="box-info">
                 <li>
-                    <i class='bx bxs-calendar-check' style="font-size: 24px;"></i>
-                    <form action="{{ url_for('registrar_pedido') }}" method="get" style="display: inline;">
-                        <button type="submit"
-                            style="background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
-                            <span class="text">
-                                <h3>{{ num_orders_today }}</h3>
-                                <p>Pedidos</p>
-                            </span>
-                        </button>
-                    </form>
+                    <i class='bx bxs-shopping-bags'></i>
+                    <a href="{{ url_for('registrar_pedido') }}">
+                        <span class="text">
+                            <h3>{{ num_orders_today }}</h3>
+                            <p>Pedidos del Dia</p>
+                        </span>
+                    </a>
                 </li>
                 <li>
                     <i class='bx bxs-group'></i>
                     <a href="{{ url_for('clientes') }}">
                         <span class="text">
                             <h3>{{ num_clients }}</h3>
-                            <p>Clientes</p>
+                            <p>Clientes Registrados</p>
                         </span>
                     </a>
                 </li>
@@ -138,16 +135,28 @@
                     <i class='bx bxs-dollar-circle'></i>
                     <span class="text">
                         <h3>${{ total_sales_today}}</h3>
-                        <p>Total Ventas</p>
+                        <p>Total Ventas del Dia</p>
                     </span>
                 </li>
+                <li>
+                    <i class='bx bxs-shopping-bags'></i>
+                    <span class="text">
+                        <h3>${{ total_profit_today}}</h3>
+                        <p>Total Ganancias del Dia</p>
+                    </span>
+                </li>
+
             </ul>
 
             <div class="table-data">
                 <div class="order">
                     <div class="head">
-                        <h3>Ordenes recientes</h3>
-                        <i class='bx bx-search'></i>
+                        <h3>Pedidos Recientes</h3>
+                        <div class="search-container">
+                            <i class='bx bx-search' id="search-icon"></i>
+                            <input type="text" id="search-input" placeholder="Buscar pedidos"
+                                class="search-input">
+                        </div>
                         <i class='bx bx-filter'></i>
                     </div>
                     <table>

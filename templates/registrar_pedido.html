@@ -132,9 +132,11 @@
                                                 <option value="Cash">Cash</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-6 form-group mb-3">
+                                        <div class="col-md-6 form-group mb-3" style="position: relative;">
                                             <label for="nombre" class="col-form-label">Nombre</label>
-                                            <input type="text" class="form-control" name="nombre" id="nombre" required>
+                                            <input type="text" class="form-control" name="nombre" id="nombre" required
+                                                autocomplete="off">
+                                            <ul id="autocomplete-results" class="list-group mt-2"></ul>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -248,6 +250,7 @@
                     </div>
                 </div>
             </div>
+
         </main>
     </section>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
