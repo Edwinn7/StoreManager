@@ -88,7 +88,9 @@
                     </ul>
                 </div>
                 <form action="{{ url_for('historial_cliente') }}" method="get" class="search-form">
-                    <input type="text" name="search_query" placeholder="Buscar cliente" required>
+                    <input type="text" name="search_query" id="nombre" placeholder="Buscar cliente" required
+                        autocomplete="off">
+                    <ul id="autocomplete-results" class="list-group mt-2"></ul>
                     <button type="submit">
                         <i class='bx bx-search'></i>
                     </button>
@@ -96,53 +98,53 @@
             </div>
 
             {% if historial %}
-                <div class="table-data">
-                    <div class="order">
-                        <div class="head">
-                            <h3>Historial de movimientos: {{ cliente_nombre }}</h3>
-                        </div>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Venta</th>
-                                    <th>Compra</th>
-                                    <th>Ganancia</th>
-                                    <th>Pago en Caja</th>
-                                    <th>Estado Envío</th>
-                                    <th>Comentarios</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for entry in historial %}
-                                <tr>
-                                    <td>{{ entry.fecha }}</td>
-                                    <td>{{ entry.producto }}</td>
-                                    <td>{{ entry.cantidad }}</td>
-                                    <td class="format-number">{{ entry.venta }}</td>
-                                    <td class="format-number">{{ entry.compra }}</td>
-                                    <td class="format-number">{{ entry.ganancia }}</td>
-                                    <td>{{ entry.pago_en_caja }}</td>
-                                    <td>{{ entry.estado_envio }}</td>
-                                    <td>{{ entry.comentarios }}</td>
-                                    <td class="format-number">{{ entry.total }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Historial de movimientos: {{ cliente_nombre }}</h3>
                     </div>
+                    <table class="table table-striped historial-cliente-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Venta</th>
+                                <th>Compra</th>
+                                <th>Ganancia</th>
+                                <th>Pago en Caja</th>
+                                <th>Estado Envío</th>
+                                <th>Comentarios</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in historial %}
+                            <tr>
+                                <td>{{ entry.fecha }}</td>
+                                <td>{{ entry.producto }}</td>
+                                <td>{{ entry.cantidad }}</td>
+                                <td class="format-number">{{ entry.venta }}</td>
+                                <td class="format-number">{{ entry.compra }}</td>
+                                <td class="format-number">{{ entry.ganancia }}</td>
+                                <td>{{ entry.pago_en_caja }}</td>
+                                <td>{{ entry.estado_envio }}</td>
+                                <td>{{ entry.comentarios }}</td>
+                                <td class="format-number">{{ entry.total }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <br>
-                <div class="sumary">
-                    <h3>Total deuda: ${{ total_deuda }}</h3>
-                    <h3>Saldo a favor: ${{ saldo_a_favor }}</h3>
-                    <h3>Suma total: ${{ suma_total }}</h3>
-                </div>
+            </div>
+            <br>
+            <div class="sumary">
+                <div class="summary-item">Total deuda: <td class="format-number">${{ total_deuda }}</td></div>
+                <div class="summary-item">Saldo a favor: <td class="format-number">${{ saldo_a_favor }}</td></div>
+                <div class="summary-item">Suma total: <td class="format-number">${{ suma_total }}</td></div>
+            </div>
             {% else %}
-                <p>No se encontraron registros para el cliente seleccionado.</p>
+            <p>No se encontraron registros para el cliente seleccionado.</p>
             {% endif %}
         </main>
     </section>

@@ -4,8 +4,6 @@ import mysql.connector
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# COMO SE GESTIONARA EL REGISTRO DE ABONOS EN EL ENDPOINT /registrar_abono
-
 # Configuracion de la conexion a la base de datos
 db = mysql.connector.connect(
     host="localhost",
@@ -335,10 +333,13 @@ def historial_cliente():
     try:
         # Buscar el cliente por nombre, cédula o celular
         cursor.execute("""
-            SELECT id, nombre FROM clientes WHERE nombre LIKE %s OR cedula LIKE %s OR celular LIKE %s
+            SELECT id, nombre FROM clientes 
+            WHERE nombre LIKE %s OR cedula LIKE %s OR celular LIKE %s
         """, ('%' + search_query + '%', '%' + search_query + '%', '%' + search_query + '%'))
         cliente = cursor.fetchone()
+
         if not cliente:
+            # Si no se encuentra el cliente, mostrar un mensaje
             return render_template('historial_cliente.html', historial=[], total_deuda=0, saldo_a_favor=0, suma_total=0, cliente_nombre='')
 
         cliente_id = cliente['id']
@@ -351,14 +352,14 @@ def historial_cliente():
         historial = cursor.fetchall()
 
         # Calcular total deuda, saldo a favor y suma total
-        total_deuda = sum(entry['total'] for entry in historial if entry['total'] > 0) or 0
-        saldo_a_favor = sum(entry['total'] for entry in historial if entry['total'] < 0) or 0
+        total_deuda = sum(entry['total'] for entry in historial if entry['total'] < 0) or 0
+        saldo_a_favor = sum(entry['total'] for entry in historial if entry['total'] > 0) or 0
         suma_total = total_deuda + saldo_a_favor
 
-        # Formatear los números
-        total_deuda_formateado = "{:,.2f}".format(total_deuda).replace(",", "X").replace(".", ",").replace("X", ".")
-        saldo_a_favor_formateado = "{:,.2f}".format(saldo_a_favor).replace(",", "X").replace(".", ",").replace("X", ".")
-        suma_total_formateado = "{:,.2f}".format(suma_total).replace(",", "X").replace(".", ",").replace("X", ".")
+        # Formatear los números sin decimales
+        total_deuda_formateado = "{:,.0f}".format(total_deuda).replace(",", "X").replace(".", ",").replace("X", ".")
+        saldo_a_favor_formateado = "{:,.0f}".format(saldo_a_favor).replace(",", "X").replace(".", ",").replace("X", ".")
+        suma_total_formateado = "{:,.0f}".format(suma_total).replace(",", "X").replace(".", ",").replace("X", ".")
 
     finally:
         cursor.close()
@@ -379,6 +380,17 @@ def buscar_clientes():
     cursor.close()
     return jsonify(clientes)
 
+@app.route('/buscar_historial_cliente')
+def buscar_historial_cliente():
+    query = request.args.get('query', '')
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT id, nombre FROM clientes 
+        WHERE nombre LIKE %s
+    """, (f'%{query}%',))
+    clientes = cursor.fetchall()
+    cursor.close()
+    return jsonify(clientes)
 
 
 

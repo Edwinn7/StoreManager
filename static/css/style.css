@@ -645,3 +645,19 @@ body {
 #autocomplete-results li:hover {
     background-color: #f0f0f0;
 }
+/* TOTAL CLIENTE */
+.sumary {
+    display: flex;
+    flex-direction: column; /* Alinea los elementos verticalmente */
+    font-weight: bold; /* Hace que el texto sea negrita */
+    margin: 20px 0; /* Espacio superior e inferior */
+}
+
+.summary-item {
+    margin-bottom: 10px; /* Espacio entre los elementos */
+}
+
+.summary-item span.format-number {
+    font-weight: normal; /* Asegúrate de que solo el texto del valor esté en negrita */
+    margin-left: 5px; /* Espacio entre la etiqueta y el valor */
+}
